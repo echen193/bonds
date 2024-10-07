@@ -1,20 +1,37 @@
 {
-  "name": "drawing",
+  "name": "react-drawing",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.16",
+    "@mui/material": "^5.15.16",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.101",
-    "@types/react": "^18.3.3",
+    "@types/node": "^16.18.96",
+    "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
+    "axios": "^1.7.2",
+    "drizzle-kit": "^0.23.2",
+    "drizzle-orm": "^0.32.2",
+    "express": "^4.19.2",
+    "graph-data-structure": "^3.5.0",
+    "konva": "^9.3.6",
+    "moment-timezone": "^0.5.45",
+    "pg": "^8.12.0",
+    "postcss": "^8.4.38",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.2.0",
     "react-konva": "^18.2.10",
+    "react-konva-utils": "^1.0.6",
     "react-scripts": "5.0.1",
+    "tailwindcss": "^3.4.3",
     "typescript": "^4.9.5",
+    "uuid": "^9.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -40,5 +57,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8"
   }
 }
