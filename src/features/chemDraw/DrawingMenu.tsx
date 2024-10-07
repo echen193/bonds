@@ -1,5 +1,4 @@
 import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { Bonds } from "./model";
 import { GiArrowCursor } from "react-icons/gi";
 import { BsPencil } from "react-icons/bs";
 import { FaRegCircle, FaLongArrowAltRight, FaDownload } from "react-icons/fa";
@@ -10,7 +9,9 @@ import { TfiLayoutLineSolid } from "react-icons/tfi";
 import { TfiMenu } from "react-icons/tfi";
 import { BondType } from "./utils/bond";
 import { Actions } from "./actions";
-
+import { BsTriangleFill } from "react-icons/bs";
+import { TbTriangleInverted } from "react-icons/tb";
+import { BsTriangle } from "react-icons/bs";
 type DrawingMenuProps = {
   action: BondType;
   setAction: (action: BondType) => void;
@@ -28,7 +29,7 @@ export function DrawingMenu({ action, setAction }: DrawingMenuProps) {
       <GiArrowCursor size="2rem" />
       </ToggleButton> */}
       <ToggleButton
-        value={Bonds.Single}
+        value={BondType.Single}
         className={
           action === BondType.Single ? "bg-violet-300" : " hover:bg-violet-100"
         }
@@ -38,7 +39,7 @@ export function DrawingMenu({ action, setAction }: DrawingMenuProps) {
       </ToggleButton>
 
       <ToggleButton
-        value={Bonds.Double}
+        value={BondType.Double}
         className={
           action === BondType.Double ? "bg-violet-300" : " hover:bg-violet-100"
         }
@@ -47,13 +48,31 @@ export function DrawingMenu({ action, setAction }: DrawingMenuProps) {
         <TfiLineDouble size="2rem" />
       </ToggleButton>
       <ToggleButton
-        value={Bonds.Triple}
+        value={BondType.Triple}
         className={
           action === BondType.Triple ? "bg-violet-300" : " hover:bg-violet-100"
         }
         onClick={() => setAction(BondType.Triple)}
       >
         <TfiMenu size="2rem" />
+      </ToggleButton>
+      <ToggleButton
+        value={BondType.Front}
+        className={
+          action === BondType.Front ? "bg-violet-300" : " hover:bg-violet-100"
+        }
+        onClick={() => setAction(BondType.Front)}
+      >
+        <BsTriangleFill size="2rem" />
+      </ToggleButton>
+      <ToggleButton
+        value={BondType.Back}
+        className={
+          action === BondType.Back ? "bg-violet-300" : " hover:bg-violet-100"
+        }
+        onClick={() => setAction(BondType.Back)}
+      >
+        <BsTriangle size="2rem" />
       </ToggleButton>
     </ToggleButtonGroup>
   );

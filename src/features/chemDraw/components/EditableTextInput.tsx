@@ -5,9 +5,18 @@ type Props = {
   x: number;
   y: number;
   value: string;
+  color?: string;
   onChange: (newLabel: string) => void;
+  isEditable?: boolean;
 };
-export default function EditableTextInput({ x, y, value, onChange }: Props) {
+export default function EditableTextInput({
+  x,
+  y,
+  value,
+  color = "black",
+  onChange,
+  isEditable = true,
+}: Props) {
   const [label, setLabel] = useState(value);
   const [isEditing, setisEditing] = useState(false);
   const baseStyle = {
@@ -35,7 +44,6 @@ export default function EditableTextInput({ x, y, value, onChange }: Props) {
     if (e.keyCode === ESCAPE_KEY) {
       setLabel(value);
     }
-    // console.log(e.target.value);
   };
   return (
     <>
@@ -45,8 +53,13 @@ export default function EditableTextInput({ x, y, value, onChange }: Props) {
           y={y - 5} // Position the label slightly below the circle
           text={value}
           fontSize={15}
-          fill="black"
-          onDblClick={() => setisEditing(true)}
+          fill={color}
+          onDblClick={() => {
+            if (!isEditable) {
+              return;
+            }
+            setisEditing(true);
+          }}
         />
       )}
       <Html

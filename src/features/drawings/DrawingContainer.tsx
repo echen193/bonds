@@ -10,9 +10,6 @@ export function DrawingContainer() {
   return (
     <Box>
       <Card variant="outlined" sx={{ minHeight: 500 }}>
-        <CardContent>
-          <DrawingPanel action={action} fillColor={fillColor} />
-        </CardContent>
         <CardActions>
           <DrawingMenu
             action={action}

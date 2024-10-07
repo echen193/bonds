@@ -2,27 +2,51 @@ import React, { useState } from "react";
 import { Group, Circle, Text } from "react-konva";
 import { BondType, updateBond } from "./utils/bond";
 import EditableTextInput from "./components/EditableTextInput";
+import { Actions } from "./actions";
+import { Node } from "./DrawingPanel";
 
 type Props = {
-  id: string | null;
-  x: number;
-  y: number;
-  label: string;
-  onChangeLabel: (id: string, label: string) => void;
+  // id: string | null;
+  // x: number;
+  // y: number;
+  // label: string;
+  node: Node;
+  onChangeLabel?: (id: string, label: string) => void;
+  action?: boolean;
+  isEditable?: boolean;
 };
 
-export default function BondNode({ id, x, y, label, onChangeLabel }: Props) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentLabel, setCurrentLabel] = useState(label);
-  const handleTextClick = () => {
-    setIsEditing(true);
-  };
+export default function BondNode({
+  // id,
+  // x,
+  // y,
+  // label,
+  node,
+  onChangeLabel,
+  action,
+  isEditable = true,
+}: Props) {
+  const { id, x, y, label, selected } = node;
+  // const [isEditing, setIsEditing] = useState(false);
+  // const [currentLabel, setCurrentLabel] = useState(label);
+  // const handleTextClick = () => {
+  //   setIsEditing(true);
+  // };
   const handleLabelChange = (newLabel: string) => {
-    onChangeLabel(id as string, newLabel);
+    if (onChangeLabel) {
+      onChangeLabel(id as string, newLabel);
+    }
   };
   return (
     <>
-      <Circle key={id} x={x} y={y} radius={10} fill="white" />
+      <Circle
+        key={id}
+        x={x}
+        y={y}
+        radius={10}
+        draggable={action}
+        fill={"white"}
+      />
       {
         <>
           {/* <Text
@@ -35,8 +59,10 @@ export default function BondNode({ id, x, y, label, onChangeLabel }: Props) {
           <EditableTextInput
             x={x}
             y={y}
-            value={label}
+            color={selected ? "red" : "black"}
+            value={label ?? ""}
             onChange={handleLabelChange}
+            isEditable={isEditable}
           />
         </>
       }

@@ -4,18 +4,28 @@ export type Point = {
   y: number;
 };
 const LineOffset = 4;
-const BondLength = 100;
+export const BondLength = 100;
+export const TriangleWidth = 20;
+
 export enum BondType {
   Single = 1,
   Double,
   Triple,
+  Front,
+  Back
 }
+export const regularBonds = [BondType.Single, BondType.Double, BondType.Triple]
 export type BondPosition = {
   from: Point;
   to: Point;
   opacity?: number
 };
-
+export type Rectangle = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 export const updateBond = (
   start: Point,
   end: Point,
@@ -26,8 +36,11 @@ export const updateBond = (
   const dx = endX - startX;
   const dy = endY - startY;
   const slope = dy / dx;
-
-  const perpendicularSlope = -1 / slope;
+  console.log("dy: ", dy)
+  let perpendicularSlope = 1
+  if (dy ){
+    perpendicularSlope = -1 / slope;
+  }
   const offsetVal =
     LineOffset * Math.sqrt(1 / (1 + Math.pow(perpendicularSlope, 2)));
   // const {from:newStart, to:newEnd} = fixedLengthLine(start, end, BondLength);
@@ -137,4 +150,64 @@ export function drawRing(start: Point, end: Point, sides: number) {
   }
 
   return { ringNodes: vertices, ringBonds: edages };
+}
+export function isInsideRect(pos: Point, rect: Rectangle) {
+  let xinside = false
+  let yinside = false
+  const startX = rect.x
+  const endX = rect.x + rect.width
+  const startY = rect.y
+  const endY = rect.y + rect.height
+  if (startX < endX && pos.x >= startX && pos.x < endX ){
+    xinside=true
+  }
+  if (startX >= endX && pos.x < startX && pos.x >= endX) {
+    xinside =true
+  }
+  if (startY < endY && pos.y >= startY && pos.y < endY) {
+    yinside = true
+  }
+  if (startY >= endY && pos.y < startY && pos.y >= endY) {
+    yinside = true
+  }
+  return xinside && yinside
+
+}
+export function calculateTriangleVertices(top: Point, mid: Point) {
+  const baseWidth = TriangleWidth;
+  const { x: topX, y: topY } = top;
+  const { x: midX, y: midY } = mid;
+
+  // Calculate the direction vector from M to C
+  const dx = topX - midX;
+  const dy = topY - midY;
+
+  // Calculate the length of the direction vector
+  const length = Math.sqrt(dx * dx + dy * dy);
+
+  // Normalize the direction vector
+  const unitDx = dx / length;
+  const unitDy = dy / length;
+
+  // Calculate the perpendicular vector (rotating by 90 degrees)
+  const perpDx = -unitDy;
+  const perpDy = unitDx;
+
+  // Half of the base width
+  const halfBase = baseWidth / 2;
+
+  // Calculate the coordinates of the base vertices (A and B)
+  const ax = midX + perpDx * halfBase;
+  const ay = midY + perpDy * halfBase;
+  const bx = midX - perpDx * halfBase;
+  const by = midY - perpDy * halfBase;
+
+  // The coordinates of the top vertex (C) are given
+  const C = { x: topX, y: topY };
+
+  return {
+    A: { x: ax, y: ay },
+    B: { x: bx, y: by },
+    C: C,
+  };
 }

@@ -1,62 +1,136 @@
-import React, { useState } from "react";
-import { Group, Line, Rect } from "react-konva";
-import { BondType, updateBond } from "./utils/bond";
+import React, { useCallback, useMemo, useState } from "react";
+import { Group, Line, Rect, Shape } from "react-konva";
+import {
+  BondLength,
+  BondType,
+  calculateTriangleVertices,
+  regularBonds,
+  TriangleWidth,
+  updateBond,
+} from "./utils/bond";
 
 type Props = {
   to: { x: number; y: number };
   from: { x: number; y: number };
   bondType?: BondType;
   id: string;
-  onUpdateBond: (id: string, newbond: BondType) => void;
+  selected?: boolean;
+  onUpdateBond?: (id: string, newbond: BondType) => void;
 };
 
-export default function Bond({ to, from, bondType, id, onUpdateBond }: Props) {
-  const handleDblClick = () => {
+export default function Bond({
+  to,
+  from,
+  bondType,
+  id,
+  onUpdateBond,
+  selected,
+}: Props) {
+  const isRegularBond = regularBonds.includes(bondType as BondType);
+  const handleDblClick = useCallback(() => {
     let newbond = bondType;
-    if (bondType === BondType.Single) {
-      newbond = BondType.Double;
-    } else if (bondType === BondType.Double) {
-      newbond = BondType.Triple;
+    if (isRegularBond) {
+      if (bondType === BondType.Single) {
+        newbond = BondType.Double;
+      } else if (bondType === BondType.Double) {
+        newbond = BondType.Triple;
+      } else {
+        newbond = BondType.Single;
+      }
     } else {
-      newbond = BondType.Single;
+      if (bondType === BondType.Front) {
+        newbond = BondType.Back;
+      } else if (bondType === BondType.Back) {
+        newbond = BondType.Front;
+      }
     }
-    onUpdateBond(id, newbond);
-  };
-
+    if (onUpdateBond && newbond) {
+      onUpdateBond(id, newbond);
+    }
+  }, [bondType, id, isRegularBond, onUpdateBond]);
+  if (bondType === BondType.Double) {
+    console.log("Before Update from:", from);
+    console.log("Before Update to:", to);
+    console.log("Before Update bontType:", bondType);
+  }
   const bonds = updateBond(from, to, bondType);
-  return (
-    <Group
-      onDblClick={handleDblClick}
-      key={id}
-      onMouseEnter={(e: any) => {
-        e.target.getStage().container().style.cursor = "pointer";
-      }}
-      onMouseleave={(e: any) => {
-        e.target.getStage().container().style.cursor = "default";
-      }}
-    >
-      {bonds.map((b, index) => {
-        return (
-          <>
-            <Line
-              key={index}
-              points={[b.from.x, b.from.y, b.to.x, b.to.y]}
-              stroke="black"
-              opacity={b.opacity}
-            />
-            {/* {selectedBond === id && (
-              <Rect
-                x={Math.min(b.from.x, b.to.x) - 5}
-                y={Math.min(b.from.y, b.to.y) - 5}
-                width={Math.abs(b.to.x - b.from.x) + 10}
-                height={Math.abs(b.to.y - b.from.y) + 10}
-                stroke="red"
-                strokeWidth={2}
+  if (bondType === BondType.Double) {
+    console.log("After Update bonds:", bonds);
+  }
+
+  const renderRegularBonds = useMemo(() => {
+    return (
+      <Group
+        onDblClick={handleDblClick}
+        key={id}
+        onMouseEnter={(e: any) => {
+          e.target.getStage().container().style.cursor = "pointer";
+        }}
+        onMouseleave={(e: any) => {
+          e.target.getStage().container().style.cursor = "default";
+        }}
+      >
+        {bonds.map((b, index) => {
+          return (
+            <>
+              <Line
+                key={index}
+                points={[b.from.x, b.from.y, b.to.x, b.to.y]}
+                stroke={selected ? "red" : "black"}
+                opacity={b.opacity}
               />
-            )} */}
-          </>
-        );
-      })}
-    </Group>
+              {/* {selected && (
+            <Rect
+              x={Math.min(b.from.x, b.to.x) - 5}
+              y={Math.min(b.from.y, b.to.y) - 5}
+              width={Math.abs(b.to.x - b.from.x) + 10}
+              height={Math.abs(b.to.y - b.from.y) + 10}
+              stroke="red"
+              strokeWidth={2}
+            />
+          )} */}
+            </>
+          );
+        })}
+      </Group>
+    );
+  }, [bonds, handleDblClick, id, selected]);
+
+  const renderTriangles = useMemo(() => {
+    const { A, B, C } = calculateTriangleVertices(from, to);
+    return (
+      <Shape
+        onMouseEnter={(e: any) => {
+          e.target.getStage().container().style.cursor = "pointer";
+        }}
+        onMouseleave={(e: any) => {
+          e.target.getStage().container().style.cursor = "default";
+        }}
+        onDblClick={handleDblClick}
+        width={TriangleWidth}
+        height={BondLength}
+        sceneFunc={function (context: any, shape: any) {
+          // const width = shape.width();
+          // const height = shape.height();
+          context.beginPath();
+          context.moveTo(A.x, A.y);
+          context.lineTo(B.x, B.y);
+          context.lineTo(C.x, C.y);
+          context.closePath();
+
+          // (!) Konva specific method, it is very important
+          context.fillStrokeShape(shape);
+        }}
+        fill={bondType === BondType.Front ? "#00D2FF" : "white"}
+        stroke="black"
+        strokeWidth={1}
+      />
+    );
+  }, [bondType, from, handleDblClick, to]);
+  return (
+    <>
+      {isRegularBond && renderRegularBonds}
+      {!isRegularBond && renderTriangles}
+    </>
   );
 }
