@@ -48,15 +48,8 @@ export default function Bond({
       onUpdateBond(id, newbond);
     }
   }, [bondType, id, isRegularBond, onUpdateBond]);
-  if (bondType === BondType.Double) {
-    console.log("Before Update from:", from);
-    console.log("Before Update to:", to);
-    console.log("Before Update bontType:", bondType);
-  }
+
   const bonds = updateBond(from, to, bondType);
-  if (bondType === BondType.Double) {
-    console.log("After Update bonds:", bonds);
-  }
 
   const renderRegularBonds = useMemo(() => {
     return (

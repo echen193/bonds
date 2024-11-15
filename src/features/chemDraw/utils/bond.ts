@@ -36,7 +36,7 @@ export const updateBond = (
   const dx = endX - startX;
   const dy = endY - startY;
   const slope = dy / dx;
-  console.log("dy: ", dy)
+
   let perpendicularSlope = 1
   if (dy ){
     perpendicularSlope = -1 / slope;

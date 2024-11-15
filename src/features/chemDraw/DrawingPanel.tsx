@@ -54,8 +54,6 @@ export function DrawingPanel({
   const [isSelected, setIsSelected] = useState<boolean>(false);
   const [displaySmiles, setDisplaySmiles] = useState("");
   const [selectedSmiles, setSelectedSmiles] = useState("");
-  const [selectedNodes, setSelectedNodes] = useState<Node[]>([]);
-  const [selectedEdges, setSelectedEdges] = useState<Edge[]>([]);
   const [selectRect, setSelectRect] = useState<{
     x: number;
     y: number;
@@ -74,11 +72,13 @@ export function DrawingPanel({
   }, [edges]);
   const [currentEdge, setCurrentEdge] = useState<Edge | null>(null);
   const currentNodeRef = useRef<Node>();
-
+  const [nodeCounter, setNodeCounter] = useState(1);
   const addNode = (pos: { x: number; y: number }) => {
     const nid = `node-${uuid()}`;
+    // const nid = `${nodeCounter}`;
     const newNode: Node = { x: pos.x, y: pos.y, id: nid, label: "C" };
     setNodes((prev) => [...prev, newNode]);
+
     return newNode;
   };
   const getClosestNode = useCallback(
@@ -104,19 +104,6 @@ export function DrawingPanel({
     return updatedNodes;
   };
 
-  // const handleNodeDragEnd = (e: any, id: string) => {
-  //   const newNodes = nodes.map((node) => {
-  //     if (node.id === id) {
-  //       return {
-  //         ...node,
-  //         x: e.target.x(),
-  //         y: e.target.y(),
-  //       };
-  //     }
-  //     return node;
-  //   });
-  //   setNodes(newNodes);
-  // };
   const drawRDNodes = async (nodes: any[], edges: any[]) => {
     try {
       const response = await retrieveNodeEdgeDataUvi(nodes, edges);
@@ -267,15 +254,7 @@ export function DrawingPanel({
     setEdges(updatedEdges);
   };
   console.log("-----smiles--", displaySmiles);
-  // useEffect(() => {
-  //   const updatedEdges = edges.map((edge) => {
-  //     const fromNode = nodes.find((n) => n.id === edge.from);
-  //     const toNode = nodes.find((n) => n.id === edge.to);
 
-  //     return { ...edge, selected: fromNode?.selected && toNode?.selected };
-  //   });
-  //   setEdges(updatedEdges);
-  // }, [edges, nodes]);
   const handleMouseUp = (e: any) => {
     // Drawing reset
     let currentNodes = nodes;
@@ -347,7 +326,7 @@ export function DrawingPanel({
         if (n.id === id) {
           return {
             ...n,
-            label: label.toUpperCase(),
+            label: label.length === 1 ? label.toUpperCase() : label,
           };
         }
         return n;
@@ -388,16 +367,6 @@ export function DrawingPanel({
                 onChangeLabel={onNodeLabelChange}
                 //action={}
               />
-              // <Circle
-              //   key={node.id}
-              //   x={node.x}
-              //   y={node.y}
-              //   radius={10}
-              //   fill="blue"
-              //   // draggable
-              //   // onDragEnd={(e) => handleNodeDragEnd(e, node.id)}
-              //   // onMouseDown={(e) => handleNodeMouseDown(node.id, e)}
-              // />
             ))}
           {isSelected && <Rect {...selectRect} stroke="red" />}
         </Layer>

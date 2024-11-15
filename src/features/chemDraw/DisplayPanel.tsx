@@ -3,6 +3,7 @@ import { Stage, Layer, Text } from "react-konva";
 import { Node, Edge } from "./DrawingPanel";
 import Bond from "./Bond";
 import BondNode from "./BondNode";
+import { Rect } from "react-konva";
 type NodeList = Node[];
 type EdgeList = Edge[];
 type Props = {
@@ -19,11 +20,26 @@ export function DisplayPanel({ nodes, edges, showNodes }: Props) {
     x: n.x + centerX,
     y: n.y + centerY,
   }));
-  console.log("----centerX: ", centerX);
-  console.log("----centerY: ", centerY);
-  console.log("Edges: ", edges);
+  const [selectRect, setSelectRect] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }>({ x: 0, y: 0, width: 0, height: 0 });
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectedNodes, setSelectedNodes] = useState<Node[]>([]);
+  const [selectedEdges, setSelectedEdges] = useState<Edge[]>([]);
+  const [isSelected, setIsSelected] = useState<boolean>(false);
+
+  console.log("Selected Nodes:", selectedNodes);
   return (
-    <Stage width={window.innerWidth / 2} height={window.innerHeight}>
+    <Stage
+      width={window.innerWidth / 2}
+      height={window.innerHeight}
+      // onMouseDown={handleMouseDown}
+      // onMouseMove={handleMouseMove}
+      // onMouseUp={handleMouseUp}
+    >
       <Layer>
         {edges.map((edge, index) => {
           const fromNode = transformedNodes.find(
@@ -50,6 +66,15 @@ export function DisplayPanel({ nodes, edges, showNodes }: Props) {
           transformedNodes.map((node) => {
             return <BondNode node={node} isEditable={false} />;
           })}
+        {isSelecting && (
+          <Rect
+            x={selectRect.x}
+            y={selectRect.y}
+            width={selectRect.width}
+            height={selectRect.height}
+            stroke="blue"
+          />
+        )}
       </Layer>
     </Stage>
   );
